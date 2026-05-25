@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .top-border-gradient {
+            background: linear-gradient(90deg, #1cd760 0%, #22d3ee 100%);
+            height: 4px;
+            border-radius: 4px 4px 0 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-6">
+
+<div class="relative bg-white border border-gray-200 rounded-xl shadow-sm max-w-[400px] w-full overflow-hidden">
+    <div class="top-border-gradient w-full"></div>
+    <div class="p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Starter</h2>
+        <div class="mb-1">
+          <span class="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-1 rounded mb-2">
+            7-days free then:
+          </span>
+        </div>
+        <div class="flex items-baseline gap-1">
+            <span class="text-4xl font-bold text-gray-900">$83.25</span>
+            <span class="text-gray-400 font-medium">/month</span>
+        </div>
+        <p class="text-sm text-gray-500 mt-1 mb-6">Billed yearly at <span class="font-semibold text-gray-700">$999.00</span></p>
+        <div class="relative group mb-8">
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-gray-800 text-white text-sm p-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 shadow-lg">
+                You cannot downgrade your plan until within 30 days of your next billing date.
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-800"></div>
+            </div>
+            <button class="w-full py-3 px-4 border border-gray-300 rounded-lg text-gray-700 font-bold bg-gray-100 hover:bg-white transition-colors cursor-not-allowed">
+                Downgrade to Starter
+            </button>
+        </div>
+        <hr class="border-gray-200 mb-8" />
+        <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+            <span class="mt-1 text-green-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE --><path fill="currentColor" d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3z"/></svg>
+            </span>
+                <div class="text-sm">
+                    <p class="text-gray-700 font-medium leading-tight">Primary user + 0 free team members</p>
+                    <p class="text-gray-400 mt-1">(extra team members for $35/month)</p>
+                </div>
+            </li>
+            <li class="flex items-start gap-3">
+            <span class="mt-1 text-green-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE --><path fill="currentColor" d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3z"/></svg>
+            </span>
+                <p class="text-sm text-gray-700 font-medium">Save unlimited properties</p>
+            </li>
+            <li class="flex items-start gap-3">
+            <span class="mt-1 text-green-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE --><path fill="currentColor" d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3z"/></svg>
+            </span>
+                <div class="text-sm">
+                    <p class="text-gray-700 font-bold leading-tight uppercase">10 000 <span class="capitalize font-medium">exports</span></p>
+                    <p class="text-gray-400 mt-1">(additional exports at $0.02 each)</p>
+                </div>
+            </li>
+            <li class="flex items-start gap-3">
+            <span class="mt-1 text-green-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE --><path fill="currentColor" d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3z"/></svg>
+            </span>
+                <div class="text-sm">
+                    <p class="text-gray-700 font-bold leading-tight uppercase">500 <span class="capitalize font-medium text-gray-700">free skip traces</span></p>
+                    <p class="text-gray-400 mt-1">(additional skip tracing at $0.08 each)</p>
+                </div>
+            </li>
+            <li class="flex items-start gap-3">
+            <span class="mt-1 text-green-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE --><path fill="currentColor" d="M12 1L9 9l-8 3l8 3l3 8l3-8l8-3l-8-3z"/></svg>
+            </span>
+                <p class="text-sm text-gray-700 font-medium">Imports $0.01</p>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

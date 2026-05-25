@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>JS Завдання</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        section { border-bottom: 2px solid #ccc; padding: 20px 0; }
+        
+        /* Завдання 5: Стилі для анімації */
+        #elid {
+            width: 50px;
+            height: 50px;
+            background-color: royalblue;
+            position: relative;
+            left: 0;
+            transition: left 0.4s ease;
+            margin: 20px 0;
+        }
+        
+        form div { margin-bottom: 10px; }
+        .result-box { margin-top: 10px; font-weight: bold; color: green; }
+    </style>
+</head>
+<body>
+
+<script>
+    // ЗАВДАННЯ 2: Практика (змінні)
+    let name = "Василь";
+    let admin = name;
+    console.log("Завдання 2 (admin):", admin);
+</script>
+
+<hr>
+
+<section>
+    <h2>Завдання 3: Пошук коду округу</h2>
+    <input type="text" id="countyInput" placeholder="Наприклад: Baldwin County, Alabama">
+    <button onclick="handleSearch()">Знайти код</button>
+    <div id="apiResult" class="result-box"></div>
+</section>
+
+<section>
+    <h2>Завдання 4: Валідація форми</h2>
+    <form id="userForm">
+        <div><input type="text" name="first_name" placeholder="Ім'я"></div>
+        <div><input type="text" name="last_name" placeholder="Прізвище"></div>
+        <div><input type="email" name="email" placeholder="Email"></div>
+        <button type="submit">Відправити</button>
+    </form>
+</section>
+
+<section>
+    <h2>Завдання 5: Анімація</h2>
+    <button onclick="moveBox(-100)">Вліво</button>
+    <button onclick="moveBox(100)">Вправо</button>
+    <div id="elid"></div>
+</section>
+
+<script>
+    // --- ЗАВДАННЯ 1: Пріоритет завантаження скриптів ---
+// Відповідь:
+// Першим виконається big.js, тому що браузер виконує скрипти послідовно зверху вниз,
+// незалежно від того, який файл завантажився швидше.
+
+
+// --- ЗАВДАННЯ 2: Логіка та змінні ---
+// 1) Обчислення:
+var a = 2;
+var x = 1 + (a *= 2);
+
+// Відповідь:
+// x = 5, тому що спочатку (a *= 2) дає 4, а потім 1 + 4 = 5.
+
+console.log("Завдання 2 (x):", x);
+
+
+// 2) Чи з'явиться alert?
+if ("0") {
+    alert('Привіт');
+}
+
+// Відповідь:
+// Так, alert з'явиться, тому що рядок "0" є непорожнім і в JavaScript вважається true.
+
+    // --- ЗАВДАННЯ 3: Робота з API (Fetch) ---
+    let countiesData = [];
+
+    async function fetchCounties() {
+        const url = "https://api.census.gov/data/2020/acs/acs5/profile?get=NAME&for=county:*";
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            // Перетворюємо масив масивів у масив об'єктів (пропускаємо заголовок data[0])
+            countiesData = data.slice(1).map(item => ({
+                name: item[0],
+                state: item[1],
+                county: item[2],
+                fullCode: item[1] + item[2]
+            }));
+            console.log("Дані завантажено:", countiesData.length, "округів");
+        } catch (error) {
+            console.error("Помилка завантаження API:", error);
+        }
+    }
+
+    function findCountyCode(countyName) {
+        const found = countiesData.find(c => c.name.toLowerCase() === countyName.toLowerCase().trim());
+        return found ? found.fullCode : "Округ не знайдено";
+    }
+
+    async function handleSearch() {
+        if (countiesData.length === 0) await fetchCounties();
+        const inputVal = document.getElementById('countyInput').value;
+        const code = findCountyCode(inputVal);
+        document.getElementById('apiResult').innerText = "Код: " + code;
+    }
+
+    // Попереднє завантаження даних
+    fetchCounties();
+
+
+    // --- ЗАВДАННЯ 4: Валідація форми ---
+    document.getElementById('userForm').addEventListener('submit', function(event) {
+        const firstName = this.first_name.value.trim();
+        const lastName = this.last_name.value.trim();
+        const email = this.email.value.trim();
+
+        if (!firstName || !lastName || !email) {
+            event.preventDefault(); // Скасовуємо відправку
+            alert("Помилка: Усі поля мають бути заповнені!");
+        } else {
+            alert(`Дані заповнено!\nІм'я: ${firstName}\nПрізвище: ${lastName}\nEmail: ${email}`);
+        }
+    });
+
+
+    // --- ЗАВДАННЯ 5: Анімація ---
+    let currentPos = 0;
+    function moveBox(step) {
+        const box = document.getElementById('elid');
+        currentPos += step;
+        box.style.left = currentPos + "px";
+    }
+</script>
+
+</body>
+</html
