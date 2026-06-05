@@ -2,13 +2,39 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Database\Eloquent\SoftDeletes; // Закоментовано через відсутність колонки в БД
 
 class BlogPost extends Model
 {
-    use HasFactory;
+    // якщо раніше коментували SoftDeletes, то залишаємо так
 
+    protected $fillable = [
+        'title',
+        'slug',
+        'category_id',
+        'excerpt',
+        'content_raw',
+        'is_published',
+        'published_at',
+        'user_id',
+    ];
 
-    // ...
+    /**
+     * Категорія статті (Стаття належить категорії)
+     * * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category()
+    {
+        return $this->belongsTo(BlogCategory::class);
+    }
+
+    /**
+     * Автор статті (Стаття належить користувачу)
+     * * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

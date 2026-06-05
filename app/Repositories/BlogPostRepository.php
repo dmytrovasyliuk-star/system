@@ -19,21 +19,23 @@ class BlogPostRepository extends CoreRepository
      * Отримати список статей
      * * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
+    /**
+     * Отримати список статей разом із автором та категорією
+     * * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getAllWithPaginate()
     {
-        $columns = [
-            'id',
-            'title',
-            'slug',
-            'is_published',
-            'published_at',
-            'user_id',
-            'category_id'
-        ];
+        $columns = ['id', 'title', 'slug', 'is_published', 'published_at', 'user_id', 'category_id'];
 
         $result = $this->startConditions()
             ->select($columns)
             ->orderBy('id', 'DESC')
+            ->with([
+                'category' => function ($query) {
+                    $query->select(['id', 'title']);
+                },
+                'user:id,name',
+            ])
             ->paginate(25);
 
         return $result;
