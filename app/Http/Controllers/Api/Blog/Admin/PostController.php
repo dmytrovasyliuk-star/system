@@ -10,6 +10,11 @@ use App\Models\BlogPost;
 use App\Jobs\BlogPostAfterCreateJob;
 use App\Jobs\BlogPostAfterDeleteJob;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Models\BlogPost;
+use App\Http\Requests\BlogPostCreateRequest;
 
 class PostController extends BaseController
 {
@@ -40,6 +45,13 @@ class PostController extends BaseController
         }
 
         return ['success' => false, 'message' => 'Помилка збереження'];
+        $data = $request->input();
+        $item = (new BlogPost())->create($data);
+
+        if ($item) {
+            return ['success' => true, 'message' => 'Успішно збережено'];
+        }
+        return ['success' => false, 'message' => 'Помилка збереження'];
     }
 
     public function update(BlogPostUpdateRequest $request, $id)
@@ -51,6 +63,8 @@ class PostController extends BaseController
         }
 
         $data = $request->all();
+
+        // Логіку перенесено в Observer, тому просто викликаємо update
         $result = $item->update($data);
 
         if ($result) {
@@ -62,6 +76,12 @@ class PostController extends BaseController
 
     public function destroy($id)
     {
+        $result = BlogPost::destroy($id);
+
+        if ($result) {
+            return ['success' => true, 'message' => "Запис id=[{$id}] видалено"];
+        }
+        return ['success' => false, 'message' => 'Помилка видалення'];
         $result = BlogPost::destroy($id);
 
         if ($result) {
