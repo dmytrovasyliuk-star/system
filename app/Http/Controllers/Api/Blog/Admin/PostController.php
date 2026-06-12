@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Api\Blog\Admin;
 use App\Repositories\BlogPostRepository;
 use App\Repositories\BlogCategoryRepository;
 use App\Http\Requests\BlogPostUpdateRequest;
-use Carbon\Carbon;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+use App\Http\Requests\BlogPostCreateRequest;
+use App\Models\BlogPost;
+use App\Jobs\BlogPostAfterCreateJob;
+use App\Jobs\BlogPostAfterDeleteJob;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class PostController extends BaseController
 {
-    // Впроваджуємо обидва репозиторії через конструктор
+    use DispatchesJobs;
+
     public function __construct(
         private BlogPostRepository $blogPostRepository,
         private BlogCategoryRepository $blogCategoryRepository
@@ -21,13 +24,22 @@ class PostController extends BaseController
 
     public function index()
     {
-        $paginator = $this->blogPostRepository->getAllWithPaginate();
-        return $paginator;
+        return $this->blogPostRepository->getAllWithPaginate();
     }
 
-    public function store(Request $request)
+    public function store(BlogPostCreateRequest $request)
     {
-        // Буде реалізовано у наступних лабораторних
+        $data = $request->input();
+
+        // Використовуємо модель для створення, отримуємо об'єкт у змінну
+        $item = BlogPost::create($data);
+
+        if ($item) {
+            $this->dispatch(new BlogPostAfterCreateJob($item));
+            return ['success' => true, 'message' => 'Успішно збережено'];
+        }
+
+        return ['success' => false, 'message' => 'Помилка збереження'];
     }
 
     public function update(BlogPostUpdateRequest $request, $id)
@@ -39,31 +51,25 @@ class PostController extends BaseController
         }
 
         $data = $request->all();
-
-        // Автоматична генерація slug, якщо порожній
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
-
-        // Встановлення дати публікації, якщо статтю публікують вперше
-        if (empty($item->published_at) && !empty($data['is_published'])) {
-            $data['published_at'] = Carbon::now();
-        }
-
         $result = $item->update($data);
 
         if ($result) {
-            return [
-                'success' => true,
-                'message' => 'Успішно збережено'
-            ];
-        } else {
-            return ['message' => 'Помилка збереження'];
+            return ['success' => true, 'message' => 'Успішно збережено'];
         }
+
+        return ['message' => 'Помилка збереження'];
     }
 
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        // Буде реалізовано у наступних лабораторних
+        $result = BlogPost::destroy($id);
+
+        if ($result) {
+            // Використовуємо dispatch з затримкою 20 секунд
+            BlogPostAfterDeleteJob::dispatch($id)->delay(20);
+            return ['success' => true, 'message' => 'Видалено'];
+        }
+
+        return ['success' => false, 'message' => 'Помилка видалення'];
     }
 }

@@ -6,20 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('blog_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->unsignedBigInteger('parent_id')->default(0);
             $table->timestamps();
+            $table->softDeletes(); // Це знадобиться, якщо ви плануєте використовувати SoftDeletes
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('blog_categories');

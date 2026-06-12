@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Blog\Admin;
 
 use App\Models\BlogCategory;
-use Illuminate\Support\Str;
 use App\Http\Requests\BlogCategoryUpdateRequest;
 use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Repositories\BlogCategoryRepository;
@@ -12,7 +11,7 @@ class CategoryController extends BaseController
 {
     public function __construct(private BlogCategoryRepository $blogCategoryRepository)
     {
-       // parent::__construct();
+        // parent::__construct();
     }
 
     public function index()
@@ -24,10 +23,6 @@ class CategoryController extends BaseController
     public function store(BlogCategoryCreateRequest $request)
     {
         $data = $request->input();
-
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
 
         $item = (new BlogCategory())->create($data);
 
@@ -41,7 +36,7 @@ class CategoryController extends BaseController
         }
     }
 
-    public function update(BlogCategoryUpdateRequest $request, $id)
+    public function update(\Illuminate\Http\Request $request, $id)
     {
         $item = $this->blogCategoryRepository->getEdit($id);
 
@@ -50,9 +45,6 @@ class CategoryController extends BaseController
         }
 
         $data = $request->all();
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
 
         $result = $item->update($data);
 

@@ -9,15 +9,17 @@ class BlogPost extends Model
 {
     // якщо раніше коментували SoftDeletes, то залишаємо так
 
+    const UNKNOWN_USER = 1;
+
     protected $fillable = [
         'title',
         'slug',
         'category_id',
+        // 'user_id', // Видаляємо цей рядок
         'excerpt',
         'content_raw',
         'is_published',
         'published_at',
-        'user_id',
     ];
 
     /**
