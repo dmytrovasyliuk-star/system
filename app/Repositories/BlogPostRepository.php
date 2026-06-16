@@ -3,51 +3,19 @@
 namespace App\Repositories;
 
 use App\Models\BlogPost as Model;
-use Illuminate\Database\Eloquent\Collection;
 
-/**
- * Class BlogPostRepository.
- */
 class BlogPostRepository extends CoreRepository
 {
-    protected function getModelClass()
+    protected function getModelClass() { return Model::class; }
+
+    public function getAllWithPaginate($perPage = 10)
     {
-        return Model::class;
+        return $this->startConditions()
+            ->select(['id', 'title', 'slug', 'is_published', 'published_at', 'user_id', 'category_id'])
+            ->orderBy('id', 'ASC')
+            ->with(['category:id,title', 'user:id,name'])
+            ->paginate($perPage);
     }
 
-    /**
-     * Отримати список статей
-     * * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    /**
-     * Отримати список статей разом із автором та категорією
-     * * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function getAllWithPaginate()
-    {
-        $columns = ['id', 'title', 'slug', 'is_published', 'published_at', 'user_id', 'category_id'];
-
-        $result = $this->startConditions()
-            ->select($columns)
-            ->orderBy('id', 'DESC')
-            ->with([
-                'category' => function ($query) {
-                    $query->select(['id', 'title']);
-                },
-                'user:id,name',
-            ])
-            ->paginate(25);
-
-        return $result;
-    }
-
-    /**
-     * Отримати модель для редагування в адмінці
-     * @param int $id
-     * @return Model
-     */
-    public function getEdit($id)
-    {
-        return $this->startConditions()->find($id);
-    }
+    public function getEdit($id) { return $this->startConditions()->find($id); }
 }
