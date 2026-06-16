@@ -12,6 +12,7 @@ use App\Jobs\BlogPostAfterDeleteJob;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use App\Http\Resources\Api\Blog\Admin\PostResource;
+use Throwable; // Імпортуємо базовий клас помилок для діагностики
 
 class PostController extends BaseController
 {
@@ -22,51 +23,83 @@ class PostController extends BaseController
         private BlogCategoryRepository $blogCategoryRepository
     ) {}
 
+    /**
+     * Отримати список усіх статей
+     */
     public function index()
     {
-        $paginator = $this->blogPostRepository->getAllWithPaginate(10);
-        return PostResource::collection($paginator);
+        try {
+            // Безпечний виклик нашої моделі BlogPost із відношенням категорії
+            $posts = BlogPost::with(['category'])->paginate(25);
+
+            return response()->json($posts);
+        } catch (Throwable $e) {
+            // ДІАГНОСТИКА: якщо тут станеться збій, ми побачимо причину прямо у вкладці Network
+            return response()->json([
+                'error' => true,
+                'type' => get_class($e),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
+        }
     }
 
+    /**
+     * Отримати одну статтю для редагування
+     */
     public function show($id)
     {
-        $item = $this->blogPostRepository->getEdit($id);
-
-        // Якщо пост не знайдено, повертаємо чітку відповідь
-        if (!$item) {
-            return response()->json(['message' => 'Пост з ID ' . $id . ' не знайдено в базі'], 404);
-        }
-
-        // Повертаємо ресурс, якщо пост знайдено
-        return new PostResource($item);
+        $post = BlogPost::with(['category'])->findOrFail($id);
+        return response()->json(['data' => $post]);
     }
 
+    /**
+     * Створити нову статтю
+     */
     public function store(BlogPostCreateRequest $request)
     {
         $data = $request->input();
         $item = BlogPost::create($data);
+
         if ($item) {
             $this->dispatch(new BlogPostAfterCreateJob($item));
-            return ['success' => true, 'message' => 'Успішно збережено'];
+            return response()->json(['success' => true, 'message' => 'Успішно збережено']);
         }
-        return ['success' => false, 'message' => 'Помилка збереження'];
+
+        return response()->json(['success' => false, 'message' => 'Помилка збереження'], 400);
     }
 
+    /**
+     * Оновити існуючу статтю
+     */
     public function update(BlogPostUpdateRequest $request, $id)
     {
         $item = $this->blogPostRepository->getEdit($id);
-        if (empty($item)) return ['message' => "Запис id=[{$id}] не знайдено"];
+
+        if (empty($item)) {
+            return response()->json(['message' => "Запис id=[{$id}] не знайдено"], 404);
+        }
+
         $result = $item->update($request->all());
-        return $result ? ['success' => true, 'message' => 'Успішно збережено'] : ['message' => 'Помилка збереження'];
+
+        return $result
+            ? response()->json(['success' => true, 'message' => 'Успішно збережено'])
+            : response()->json(['message' => 'Помилка збереження'], 400);
     }
 
+    /**
+     * Видалити статтю
+     */
     public function destroy($id)
     {
         $result = BlogPost::destroy($id);
+
         if ($result) {
             BlogPostAfterDeleteJob::dispatch($id)->delay(20);
-            return ['success' => true, 'message' => 'Видалено успішно'];
+            return response()->json(['success' => true, 'message' => 'Видалено успішно']);
         }
-        return ['success' => false, 'message' => 'Помилка видалення'];
+
+        return response()->json(['success' => false, 'message' => 'Помилка видалення'], 400);
     }
 }

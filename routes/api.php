@@ -11,7 +11,7 @@ Route::group(['prefix' => 'blog'], function () {
 });
 
 Route::group(['prefix' => 'admin/blog'], function () {
-    $methods = ['index', 'store', 'update'];
+    $methods = ['index', 'store', 'show', 'update', 'destroy'];
 
     Route::apiResource('categories', AdminCategoryController::class)
         ->only($methods)
@@ -27,5 +27,5 @@ Route::group(['prefix' => 'admin/blog'], function () {
 Route::group(['prefix' => 'digging_deeper'], function () {
     Route::get('process-video', [DiggingDeeperController::class, 'processVideo']);
     Route::get('prepare-catalog', [DiggingDeeperController::class, 'prepareCatalog']);
-    Route::get('blog/posts/{id}', [PostController::class, 'show']); // ✅ виправлено
+    Route::get('blog/posts/{id}', [PostController::class, 'show']);
 });

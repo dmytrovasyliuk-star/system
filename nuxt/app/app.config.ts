@@ -1,8 +1,11 @@
+// app.config.ts
 export default defineAppConfig({
   ui: {
-    colors: {
-      primary: 'green',
-      neutral: 'slate'
-    }
+    primary: 'green',
+    gray: 'cool'
+  },
+  blogConfig: {
+    name: 'Мій чудовий блог',
+    itemsPerPage: 10
   }
 })

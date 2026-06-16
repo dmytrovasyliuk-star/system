@@ -3,19 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-// use Illuminate\Database\Eloquent\SoftDeletes; // Закоментовано через відсутність колонки в БД
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+// use Illuminate\Database\Eloquent\SoftDeletes; // Розкоментуй, якщо увімкнеш deleted_at в БД
 
 class BlogPost extends Model
 {
-    // якщо раніше коментували SoftDeletes, то залишаємо так
+    use HasFactory;
+    // use SoftDeletes; // Розкоментуй, якщо контролер/репозиторій викликає метод withTrashed()
 
     const UNKNOWN_USER = 1;
 
+    /**
+     * Явно вказуємо назву таблиці в базі даних.
+     * Якщо твоя таблиця називається просто 'posts', зміни значення на 'posts'.
+     */
+    protected $table = 'blog_posts';
+
+    /**
+     * Атрибути, які можна масово заповнювати (Mass Assignable).
+     */
     protected $fillable = [
         'title',
         'slug',
         'category_id',
-        // 'user_id', // Видаляємо цей рядок
+        'user_id',
         'excerpt',
         'content_raw',
         'is_published',
@@ -23,20 +35,20 @@ class BlogPost extends Model
     ];
 
     /**
-     * Категорія статті (Стаття належить категорії)
-     * * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Категорія статті (Стаття належить одній категорії)
+     * * @return BelongsTo
      */
-    public function category()
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(BlogCategory::class);
+        return $this->belongsTo(BlogCategory::class, 'category_id');
     }
 
     /**
-     * Автор статті (Стаття належить користувачу)
-     * * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Автор статті (Стаття належить одному користувачу)
+     * * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

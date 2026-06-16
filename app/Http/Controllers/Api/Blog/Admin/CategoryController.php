@@ -25,6 +25,14 @@ class CategoryController extends BaseController
         return CategoryResource::collection($paginator);
     }
 
+    public function show($id)
+    {
+        // Шукаємо категорію за ID через правильну модель
+        $category = \App\Models\BlogCategory::findOrFail($id);
+
+        // Повертаємо її у форматі JSON
+        return response()->json(['data' => $category]);
+    }
     public function store(BlogCategoryCreateRequest $request)
     {
         $data = $request->input();
@@ -61,5 +69,13 @@ class CategoryController extends BaseController
         } else {
             return ['message' => 'Помилка збереження'];
         }
+    }
+    public function destroy($id)
+    {
+        // Шукаємо саме через BlogCategory
+        $category = \App\Models\BlogCategory::findOrFail($id);
+        $category->delete();
+
+        return response()->json(['success' => true, 'message' => 'Категорію видалено']);
     }
 }

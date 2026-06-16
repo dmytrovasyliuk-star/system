@@ -29,7 +29,7 @@
     }, {
       label: 'Changelog',
       to: 'https://changelog-template.nuxt.dev/'
-    }, {
+ }, {
       type: 'separator'
     }, {
       label: 'Адмін: Статті',
